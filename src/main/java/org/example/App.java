@@ -12,7 +12,7 @@ public class App {
     private static final LinkedList<Top> tops = new LinkedList<>();
 
     public static void main(String[] args) {
-        System.out.println("\nWelcome in the App,\nfor search the shortest way between tops(1 top <= 2 ways).");
+        System.out.println("\nWelcome in the App,\nfor search the shortest way between tops.");
         System.out.println("ATTENTION! If you enter incorrect data, a app give you wrong result!!!");
         try {
             System.out.print("\nEnter the number of tops:");

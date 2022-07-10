@@ -1,14 +1,11 @@
 package org.example;
 
-import java.util.LinkedList;
-
 /**
  * Factory of objects for graphs
  */
 
 public class TopsFactory {
     private int graphCounter = 0;
-    private LinkedList<Top> topList = new LinkedList<>();
 
     public Top generateTop(String string) {
         int[] ways = parseWays(string);

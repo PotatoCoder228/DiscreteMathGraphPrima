@@ -7,8 +7,8 @@ import java.util.HashMap;
  */
 
 public class Top {
-    private String name;
-    private HashMap<String, Integer> waysToTops = new HashMap<>();
+    private final String name;
+    private final HashMap<String, Integer> waysToTops = new HashMap<>();
 
     public Top(int graphCounter, int[] ways) {
         name = String.valueOf(graphCounter);

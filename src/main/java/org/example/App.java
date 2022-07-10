@@ -31,6 +31,7 @@ public class App {
             AlgorithmPrima realisation = new AlgorithmPrima(tops);
             realisation.getShortestWay();
         } catch (NullPointerException e) {
+            e.printStackTrace();
             System.out.println("Oops, something went wrong. The app is shutting down...");
         } catch (NumberFormatException e) {
             System.out.println("Oops, you inputted is not number. The app is shutting down...");

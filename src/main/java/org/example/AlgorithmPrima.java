@@ -1,42 +1,36 @@
 package org.example;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 public class AlgorithmPrima {
     private final LinkedList<Top> tops;
-    private ArrayDeque<Top> array = new ArrayDeque<>();
     int wayLength = 0;
+    private LinkedList<Top> linkedTops = new LinkedList<>();
 
     public AlgorithmPrima(LinkedList<Top> tops) {
         this.tops = tops;
     }
 
     public void getShortestWay() {
-        Top top = tops.getFirst();//Взяли 1 вершину
+        Top top1 = tops.getFirst();//Взяли 1 вершину
         int counter = tops.size();
-        array.addLast(top);//Добавили в очередь для дальнейшего построения\
-        updateTops(top.getName());//"Удалили" эту вершину из списка
-        top = getNextTop(top);//Получили индекс следующей ближайшей вершины
-        array.addLast(top);
-        updateTops(top.getName());
-        while (counter != 2) {
-            top = getNextTop(array.getFirst(), array.getLast());
-            updateTops(top.getName());
+        //updateTops(top.getName());//"Удалили" эту вершину из списка
+        Top top2 = getNextTop(top1);//Получили индекс следующей ближайшей вершины
+        updateTops(top1, top2);
+        linkedTops.add(top1);
+        linkedTops.add(top2);
+        while (counter != 1) {
+            top2 = getNextTop();
             counter -= 1;
         }
         System.out.println("\nThe finish result: " + wayLength + "\n");
-        Iterator<Top> iterator = array.iterator();
-        while (iterator.hasNext()) {
-            System.out.print(iterator.next().getName() + "-");
-        }
     }
 
-    public void updateTops(String string) {
-        for (Top top : tops) {
-            top.updateTop(string);
+    public void updateTops(Top top1, Top top2) {
+        top1.updateTop(top2.getName());
+        top2.updateTop(top1.getName());
+        for(Top top:tops){
+            System.out.println(top.getWaysToTops().values());
         }
     }
 
@@ -61,42 +55,50 @@ public class AlgorithmPrima {
         return tops.get(index);
     }
 
-    public Top getNextTop(Top top1, Top top2) {
-        LinkedList<Integer> values1 = new LinkedList<>(top1.getWaysToTops().values());
-        LinkedList<Integer> values2 = new LinkedList<>(top2.getWaysToTops().values());
-        Integer value1 = 0;
-        Integer value2 = 0;
-        for (Integer val : values1) {
-            if (value1.equals(0) && !val.equals(0)) {
-                value1 = val;
-            } else if (!val.equals(0)) {
-                if (value1 > val) {
-                    value1 = val;
+    public Top getNextTop() {
+        LinkedList<LinkedList<Integer>> valuesForTops = new LinkedList<>();
+        LinkedList<Integer> minValues = new LinkedList<>();
+        HashMap<Integer, Integer> rowOfMinValue = new HashMap<>();
+        for(Top top:linkedTops){
+            valuesForTops.add(new LinkedList<>(top.getWaysToTops().values()));
+        }
+        Integer val = -1;
+        int row = 0;
+        int column = 0;
+        int counter = 0;
+        for(LinkedList<Integer> values:valuesForTops){
+            counter = 0;
+            for(Integer value:values){
+                if(val.equals(-1)&&!value.equals(0)){
+                    val = value;
+                    row = counter;
+                }else if(val > value&&!value.equals(0)){
+                    val = value;
+                    row = counter;
                 }
+                counter += 1;
             }
+            minValues.add(val);
+            rowOfMinValue.put(val, row);
+            val = -1;
+            row = 0;
         }
-        for (Integer val : values2) {
-            if (value2.equals(0) && !val.equals(0)) {
-                value2 = val;
-            } else if (!val.equals(0)) {
-                if (value2 > val) {
-                    value2 = val;
-                }
+        wayLength += Collections.min(minValues);
+        row = rowOfMinValue.get(Collections.min(minValues));
+        int min = 0;
+        counter = 0;
+        for(Integer value:minValues){
+            if(value.intValue() == Collections.min(minValues).intValue()){
+                min = counter;
             }
+            counter+=1;
         }
-        Top top;
-        if (value1 <= value2) {
-            System.out.println(value1);
-            wayLength += value1;
-            top = tops.get(values1.indexOf(value1));
-            array.addFirst(top);
-            return top;
-        } else {
-            System.out.println(value2);
-            wayLength += value2;
-            top = tops.get(values2.indexOf(value2));
-            array.addLast(top);
-            return top;
-        }
+        column  = Integer.parseInt(linkedTops.get(min).getName());//TODO Как посчитать строку?
+        System.out.println(minValues);
+        System.out.println(Collections.min(minValues)+" : x = " + column+" y = "+row);
+        updateTops(tops.get(row), tops.get(column));
+        linkedTops.add(tops.get(row));
+        System.out.println("Вершина:"+tops.get(column).getName());
+        return tops.get(column);
     }
 }
